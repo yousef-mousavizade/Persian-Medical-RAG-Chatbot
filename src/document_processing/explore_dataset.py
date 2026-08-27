@@ -1,8 +1,9 @@
 
 import pandas as pd
+from pathlib import Path
 
-DATA_PATH = r"D:\Programing\Github\Persian-Medical-RAG-Chatbot\data\raw\Specialized_Dataset.xlsx"
-
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / r"data\raw\Specialized_Dataset.xlsx"
 def load_dataset(path: str) -> pd.DataFrame:
     df = pd.read_excel(path)
     print(f"Total number of records : {len(df)}")
