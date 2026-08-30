@@ -2,8 +2,8 @@
 import pandas as pd
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent
-DATA_PATH = BASE_DIR / r"data\raw\Specialized_Dataset.xlsx"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_PATH = PROJECT_ROOT / "data" / "raw" / "Specialized_Dataset.xlsx"
 def load_dataset(path: str) -> pd.DataFrame:
     df = pd.read_excel(path)
     print(f"Total number of records : {len(df)}")
