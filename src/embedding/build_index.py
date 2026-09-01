@@ -8,7 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CHUNK_FILE = PROJECT_ROOT / "data" / "processed" / "chunks.jsonl"
 FAISS_DIR = PROJECT_ROOT / "data" / "processed" / "faiss_index"
 
-EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+EMBEDDING_MODEL = "intfloat/multilingual-e5-large"
 
 def load_documents(chunk_file: Path) -> list[Document]:
     """Load chunked records and convert them to LangChain Document objects."""
@@ -19,7 +19,7 @@ def load_documents(chunk_file: Path) -> list[Document]:
                 continue
             item = json.loads(line)
             docs.append(Document(
-                page_content=item["text"],
+                page_content="passage: " + item["text"],
                 metadata={
                     "chunk_id": item["chunk_id"],
                     "doc_id": item["doc_id"],
