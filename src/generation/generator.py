@@ -1,7 +1,7 @@
 from pathlib import Path
 import ollama
 
-GENERATION_MODEL = "qwen2.5:3b-instruct"
+GENERATION_MODEL = "qwen2.5:7b-instruct"
 
 SYSTEM_PROMPT = """تو یک دستیار اطلاعات دارویی هستی.
 
