@@ -1,3 +1,5 @@
+import os
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
 from pathlib import Path
 
 from langchain_community.vectorstores import FAISS
