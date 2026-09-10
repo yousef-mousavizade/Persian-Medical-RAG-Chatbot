@@ -42,9 +42,11 @@ def main():
     print(f"Loaded {len(docs)} chunks as documents")
 
     embedding = HuggingFaceEmbeddings(
-        model_name=EMBEDDING_MODEL,
-        encode_kwargs={"normalize_embeddings": True},
-    )
+    model_name=EMBEDDING_MODEL,
+    model_kwargs={"device": "cuda"},
+    encode_kwargs={"normalize_embeddings": True},
+)
+    print(embedding._client.device)
 
     print("Building FAISS index (this may take a while on first run)...")
     vectorstore = FAISS.from_documents(docs, embedding)
