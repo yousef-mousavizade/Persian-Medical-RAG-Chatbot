@@ -9,14 +9,11 @@ DATA_DIR = PROJECT_ROOT / "data" / "processed"
 IN_FILE = DATA_DIR / "cleaned_dataset.csv"
 OUT_FILE = DATA_DIR / "chunks.jsonl"
 
-# Records shorter than this are kept as a single chunk (no splitting needed).
-# Most of our records are short QA pairs (comment + response), so this only
-# affects a small number of long outliers.
-LONG_RECORD_THRESHOLD = 1000
+LONG_RECORD_THRESHOLD = 250
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200,
+    chunk_size=250,
+    chunk_overlap=30,
     length_function=len,
     # Persian-aware separators, matching the instructor's pattern
     separators=["\n\n", "\n", " .", ". ", ".", ":", "؟", "?", "!"],
