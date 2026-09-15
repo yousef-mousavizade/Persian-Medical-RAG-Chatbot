@@ -4,13 +4,17 @@ import ollama
 GENERATION_MODEL = "qwen2.5:7b-instruct"
 
 SYSTEM_PROMPT = """تو یک دستیار اطلاعات دارویی هستی.
-
+ 
 فقط بر اساس اطلاعات موجود در بخش «زمینه» (Context) پاسخ بده.
 اگر پاسخ سؤال در زمینه وجود ندارد، اطلاعات را حدس نزن و صریحاً اعلام کن
 که اطلاعات کافی در منابع موجود نیست.
-
+ 
 پاسخ را به زبان فارسی، واضح و مختصر ارائه کن.
-
+ 
+اگر تاریخچهٔ مکالمه ارائه شد، از آن فقط برای فهمیدن منظور کاربر از
+ارجاعات مبهم (مثل «همون دارو») استفاده کن؛ اطلاعات دارویی را همچنان
+فقط از بخش «زمینه» (Context) بردار، نه از حدس زدن بر اساس مکالمهٔ قبلی.
+ 
 در مورد تشخیص قطعی بیماری یا تغییر خودسرانه‌ی دوز دارو، توصیه‌ی قطعی
 ارائه نکن و کاربر را به مراجعه به پزشک یا داروساز ارجاع بده."""
 
@@ -27,15 +31,18 @@ def build_context(results) -> str:
     return "\n\n".join(parts)
 
 
-def generate_answer(question: str, results) -> str:
-    """Generate a Persian answer from the user's question and retrieved chunks.
-
-    Requires the Ollama app to be running in the background (it starts
-    automatically after installation on most systems).
-    """
+def generate_answer(question: str, results, history: list[dict] | None = None) -> str:
     context = build_context(results)
-    prompt = f"زمینه (Context):\n{context}\n\nسؤال کاربر:\n{question}"
-
+ 
+    history_block = ""
+    if history:
+        turns = []
+        for turn in history:
+            turns.append(f"کاربر: {turn['question']}\nدستیار: {turn['answer']}")
+        history_block = "تاریخچهٔ مکالمه (برای درک منظور کاربر از ارجاعات، مثل «همون دارو»):\n" + "\n\n".join(turns) + "\n\n"
+ 
+    prompt = f"{history_block}زمینه (Context):\n{context}\n\nسؤال کاربر:\n{question}"
+ 
     response = ollama.chat(
         model=GENERATION_MODEL,
         messages=[
@@ -44,5 +51,5 @@ def generate_answer(question: str, results) -> str:
         ],
         options={"temperature": 0.2},  # low temperature: grounded, consistent answers
     )
-
+ 
     return response["message"]["content"]
