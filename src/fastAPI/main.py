@@ -26,7 +26,7 @@ from generation.generator import generate_answer
 
 MAX_HISTORY_TURNS = 3
 
-MIN_CONFIDENCE_SCORE = 0.30
+MIN_CONFIDENCE_SCORE = 0.33
 
 NO_CONFIDENT_MATCH_MESSAGE = (
     "اطلاعات کافی و مرتبطی در منابع موجود برای پاسخ به این سؤال پیدا نشد. "
@@ -101,9 +101,8 @@ def ask(request: AskRequest):
     results = search(vectorstore, question)
     best_score = min(score for _, score in results) if results else float("inf")
 
-    if history and history[-1].get("drug_name"):
-        prev_drug = history[-1]["drug_name"]
-        combined_query = f"در مورد داروی {prev_drug}: {question}"
+    if best_score > MIN_CONFIDENCE_SCORE and history:
+        combined_query = history[-1]["question"] + " " + question
         combined_results = search(vectorstore, combined_query)
         combined_best = min(score for _, score in combined_results) if combined_results else float("inf")
         if combined_best < best_score:
