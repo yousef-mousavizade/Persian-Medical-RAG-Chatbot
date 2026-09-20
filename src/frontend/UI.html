@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دستیار دارویی فارسی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F2F5F1;
+    --panel: #FFFFFF;
+    --ink: #1B2420;
+    --ink-soft: #4B564F;
+    --primary: #2F6B57;
+    --primary-dark: #234F41;
+    --primary-tint: #E4EEE9;
+    --line: #D8E1DA;
+    --warn-bg: #FBF1E6;
+    --warn-border: #E3C39B;
+    --warn-text: #8A4A1E;
+    --error-bg: #FBEAE7;
+    --error-text: #9C3B2B;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Vazirmatn", Tahoma, sans-serif;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 56px);
+    background: var(--panel);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(27,36,32,0.04), 0 12px 32px rgba(27,36,32,0.06);
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .mark {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--primary-tint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mark svg { width: 20px; height: 20px; }
+
+  .brand-text h1 {
+    font-size: 16.5px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0;
+  }
+
+  .brand-text p {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 2px 0 0;
+  }
+
+  .new-chat-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .new-chat-btn:hover {
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+    border-color: var(--primary);
+  }
+
+  .new-chat-btn:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  .chip:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Chat area ---------- */
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    margin: auto 0;
+    text-align: center;
+    padding: 10px 8px 4px;
+  }
+
+  .empty-state .mark {
+    width: 52px;
+    height: 52px;
+    border-radius: 15px;
+    margin: 0 auto 18px;
+  }
+
+  .empty-state .mark svg { width: 26px; height: 26px; }
+
+  .empty-state h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 6px;
+  }
+
+  .empty-state p {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 22px;
+    line-height: 1.8;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .chip {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--primary-dark);
+    background: var(--primary-tint);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .chip:hover { background: #d8e8de; }
+  .chip:active { transform: scale(0.98); }
+
+  /* Message rows */
+  .row {
+    display: flex;
+    flex-direction: column;
+    max-width: 82%;
+  }
+
+  .row.user { align-self: flex-start; align-items: flex-start; }
+  .row.bot  { align-self: flex-end;   align-items: flex-end; }
+
+  .bubble {
+    padding: 11px 15px;
+    border-radius: var(--radius-sm);
+    font-size: 14.5px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+  }
+
+  .row.user .bubble {
+    background: var(--primary);
+    color: #fff;
+    border-top-right-radius: 4px;
+  }
+
+  .row.bot .bubble {
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-top-left-radius: 4px;
+  }
+
+  .row.bot .bubble.error {
+    background: var(--error-bg);
+    color: var(--error-text);
+    border-color: #ecc9c1;
+  }
+
+  .sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 7px;
+  }
+
+  .sources .label {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    align-self: center;
+  }
+
+  .source-pill {
+    font-size: 11.5px;
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+
+  .no-source-note {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  /* Typing indicator */
+  .typing {
+    align-self: flex-end;
+    display: flex;
+    gap: 4px;
+    padding: 12px 15px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    border-top-left-radius: 4px;
+  }
+
+  .typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-soft);
+    opacity: 0.5;
+    animation: pulse 1.1s infinite ease-in-out;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes pulse {
+      0%, 80%, 100% { opacity: 0.35; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-2px); }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .typing span { animation: none; opacity: 0.6; }
+  }
+
+  /* ---------- Composer ---------- */
+  form {
+    display: flex;
+    gap: 10px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    font-family: inherit;
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+
+  input[type="text"]::placeholder { color: #8d9890; }
+
+  button[type="submit"] {
+    flex-shrink: 0;
+    padding: 0 22px;
+    border: none;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  button[type="submit"]:hover:not(:disabled) { background: var(--primary-dark); }
+  button[type="submit"]:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ---------- Disclaimer ribbon ---------- */
+  .disclaimer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: var(--warn-bg);
+    border-top: 1px solid var(--warn-border);
+    color: var(--warn-text);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .disclaimer svg { flex-shrink: 0; width: 15px; height: 15px; }
+
+  @media (max-width: 480px) {
+    body { padding: 0; }
+    .app { height: 100vh; border-radius: 0; border: none; }
+    .row { max-width: 92%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="brand">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2F6B57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3h8"/>
+          <path d="M10 3v5.5L5 17a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-8.5V3"/>
+          <path d="M6.5 15h11"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>دستیار دارویی فارسی</h1>
+        <p>پاسخ بر اساس منابع دارویی موجود در پایگاه دانش</p>
+      </div>
+    </div>
+    <button class="new-chat-btn" id="new-chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      گفتگوی جدید
+    </button>
+  </header>
+
+  <div id="chat"></div>
+
+  <form id="chat-form">
+    <input type="text" id="question" placeholder="سؤال خود را درباره یک دارو بپرسید..." autocomplete="off" />
+    <button type="submit" id="send-btn">ارسال</button>
+  </form>
+
+  <div class="disclaimer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 9v4M12 17h.01"/>
+      <path d="M10.3 3.9 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/>
+    </svg>
+    این ابزار جایگزین مشاوره پزشک یا داروساز نیست و صرفاً بر اساس اطلاعات موجود در پایگاه داده پاسخ می‌دهد.
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const API_URL = "http://127.0.0.1:8000/ask"; // change this before deploying to a real server
+
+  const SESSION_KEY = "pharma_chat_session_id";
+  const HISTORY_KEY = "pharma_chat_history";
+
+  const chatEl = document.getElementById("chat");
+  const formEl = document.getElementById("chat-form");
+  const inputEl = document.getElementById("question");
+  const sendBtn = document.getElementById("send-btn");
+  const newChatBtn = document.getElementById("new-chat");
+
+  const EXAMPLE_QUESTIONS = [
+    "آسپرین برای سردرد خوبه؟",
+    "دوز مصرف سفیکسیم برای کودکان چقدره؟",
+    "تفاوت فلوکستین و فلووکسامین چیه؟",
+  ];
+
+  // --- session/memory management ---
+  // The backend keeps short-term conversation memory in RAM, keyed by
+  // session_id. We generate one client-side and persist it (plus the
+  // visible message list) in localStorage, so a page refresh keeps the
+  // same conversation on screen. Note: if the backend server restarts,
+  // its in-memory history for this session_id is lost even though the
+  // browser still shows the old messages - a real deployment would use
+  // a persistent store on the backend instead.
+  let sessionId = localStorage.getItem(SESSION_KEY);
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+
+  function saveState() {
+    if (sessionId) localStorage.setItem(SESSION_KEY, sessionId);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  }
+
+  function startNewConversation() {
+    sessionId = null;
+    history = [];
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(HISTORY_KEY);
+    renderAll();
+  }
+
+  newChatBtn.addEventListener("click", startNewConversation);
+
+  // --- rendering ---
+  function renderEmptyState() {
+    const wrap = document.createElement("div");
+    wrap.className = "empty-state";
+    wrap.innerHTML = `
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2F6B57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3h8"/>
+          <path d="M10 3v5.5L5 17a3 3 0 0 0 2.6 4.5h8.8A3 3 0 0 0 19 17l-5-8.5V3"/>
+          <path d="M6.5 15h11"/>
+        </svg>
+      </div>
+      <h2>چه چیزی می‌خواهید بدانید؟</h2>
+      <p>می‌توانید درباره مصرف، عوارض، دوز یا تداخل داروها بپرسید.</p>
+      <div class="chips"></div>
+    `;
+    const chipsWrap = wrap.querySelector(".chips");
+    EXAMPLE_QUESTIONS.forEach(q => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.textContent = q;
+      chip.addEventListener("click", () => {
+        inputEl.value = q;
+        formEl.requestSubmit();
+      });
+      chipsWrap.appendChild(chip);
+    });
+    chatEl.appendChild(wrap);
+  }
+
+  function renderMessage(msg) {
+    const row = document.createElement("div");
+    row.className = "row " + (msg.role === "user" ? "user" : "bot");
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble" + (msg.isError ? " error" : "");
+    bubble.textContent = msg.text;
+    row.appendChild(bubble);
+
+    if (msg.role === "bot" && !msg.isError) {
+      if (msg.sources && msg.sources.length > 0) {
+        const src = document.createElement("div");
+        src.className = "sources";
+        const label = document.createElement("span");
+        label.className = "label";
+        label.textContent = "منابع:";
+        src.appendChild(label);
+        msg.sources.forEach(s => {
+          const pill = document.createElement("span");
+          pill.className = "source-pill";
+          pill.textContent = s.drug_name || "نامشخص";
+          src.appendChild(pill);
+        });
+        row.appendChild(src);
+      } else if (msg.sources) {
+        const note = document.createElement("div");
+        note.className = "no-source-note";
+        note.textContent = "منبع مرتبطی در پایگاه داده یافت نشد.";
+        row.appendChild(note);
+      }
+    }
+
+    chatEl.appendChild(row);
+  }
+
+  function renderAll() {
+    chatEl.innerHTML = "";
+    if (history.length === 0) {
+      renderEmptyState();
+    } else {
+      history.forEach(renderMessage);
+    }
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+
+  function showTyping() {
+    const el = document.createElement("div");
+    el.className = "typing";
+    el.id = "typing-indicator";
+    el.innerHTML = "<span></span><span></span><span></span>";
+    chatEl.appendChild(el);
+    chatEl.scrollTop = chatEl.scrollHeight;
+    return el;
+  }
+
+  // --- sending messages ---
+  formEl.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const question = inputEl.value.trim();
+    if (!question) return;
+
+    if (history.length === 0) chatEl.innerHTML = ""; // clear empty state
+
+    const userMsg = { role: "user", text: question };
+    history.push(userMsg);
+    renderMessage(userMsg);
+    saveState();
+
+    inputEl.value = "";
+    sendBtn.disabled = true;
+    chatEl.scrollTop = chatEl.scrollHeight;
+
+    const typingEl = showTyping();
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, session_id: sessionId }),
+      });
+
+      typingEl.remove();
+
+      if (!response.ok) {
+        const errMsg = { role: "bot", text: "خطا در دریافت پاسخ از سرور. لطفاً دوباره تلاش کنید.", isError: true };
+        history.push(errMsg);
+        renderMessage(errMsg);
+        saveState();
+        return;
+      }
+
+      const data = await response.json();
+      sessionId = data.session_id; // backend may create/confirm the session_id
+
+      const botMsg = { role: "bot", text: data.answer, sources: data.sources || [] };
+      history.push(botMsg);
+      renderMessage(botMsg);
+      saveState();
+    } catch (err) {
+      typingEl.remove();
+      const errMsg = { role: "bot", text: "اتصال به سرور برقرار نشد. مطمئن شوید بک‌اند در حال اجراست.", isError: true };
+      history.push(errMsg);
+      renderMessage(errMsg);
+      saveState();
+    } finally {
+      sendBtn.disabled = false;
+      inputEl.focus();
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+  });
+
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
