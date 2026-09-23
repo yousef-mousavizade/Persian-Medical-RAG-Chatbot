@@ -1,0 +1,27 @@
+# --- Data processing ---
+pandas
+openpyxl
+hazm
+
+# --- Chunking ---
+langchain-text-splitters
+
+# --- Embedding & Vector Store ---
+langchain-community
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+
+# --- Generation (local LLM via Ollama) ---
+ollama
+
+# --- Backend API ---
+fastapi
+uvicorn
+
+# --- Evaluation / benchmarking ---
+requests
+
+# --- Optional: only needed if exploring PersianMedQA via Hugging Face ---
+# datasets
+# huggingface_hub
