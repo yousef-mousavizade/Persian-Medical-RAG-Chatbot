@@ -26,7 +26,7 @@ import sys
 import time
 from collections import Counter, defaultdict
 from pathlib import Path
-
+import uuid
 import pandas as pd
 from fastapi.testclient import TestClient
 
@@ -35,7 +35,7 @@ from fastapi.testclient import TestClient
 # Configuration
 # ============================================================
 
-PROJECT_ROOT = Path.cwd().resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parent[2]
 CLEANED_PATH = PROJECT_ROOT / "data" / "processed" / "cleaned_dataset.csv"
 
 TOP_K = 5
@@ -307,6 +307,7 @@ def evaluate_case(
         "/ask",
         json={
             "question": question,
+            "session_id": str(uuid.uuid4()),
         },
     )
 
